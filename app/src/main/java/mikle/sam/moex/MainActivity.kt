@@ -5,12 +5,17 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.google.gson.JsonArray
 
 class MainActivity : ComponentActivity() {
@@ -20,14 +25,27 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MyApp(stockViewModel)
+            val navController = rememberNavController()
+            NavHost(navController = navController, startDestination = "main") {
+                composable("main") {
+                    MyApp(stockViewModel, onStockClick = { stockName ->
+                        navController.navigate("details/$stockName")
+                    })
+                }
+                composable("details/{stockName}") { backStackEntry ->
+                    DetailScreen(
+                        stockName = backStackEntry.arguments?.getString("stockName"),
+                        detailViewModel = viewModel()
+                    )
+                }
+            }
         }
     }
 }
 
 
 @Composable
-fun MyApp(stockViewModel: StockViewModel) {
+fun MyApp(stockViewModel: StockViewModel, onStockClick: (String) -> Unit) {
     val stockPrice = stockViewModel.stockPrice
 
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
@@ -35,7 +53,8 @@ fun MyApp(stockViewModel: StockViewModel) {
             items(stockPrice.size) { stock ->
                 StockPriceDisplay(
                     name = stockPrice[stock].first,
-                    stockPrice = stockPrice[stock].second
+                    stockPrice = stockPrice[stock].second,
+                    onStockClick = onStockClick
                 )
             }
         }
@@ -44,8 +63,9 @@ fun MyApp(stockViewModel: StockViewModel) {
 }
 
 @Composable
-fun StockPriceDisplay(name: String, stockPrice: Double?) {
+fun StockPriceDisplay(name: String, stockPrice: Double?, onStockClick: (String) -> Unit) {
     Text(
+        modifier = Modifier.clickable { onStockClick(name) },
         text = if (stockPrice != null) {
             "Текущая цена акции $name: $stockPrice RUB"
         } else {
