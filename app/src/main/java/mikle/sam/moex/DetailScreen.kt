@@ -18,12 +18,11 @@ fun DetailScreen(stockName: String?, detailViewModel: DetailViewModel = viewMode
     val security = detailViewModel.security
     if (security != null) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = "SECID: ${security.secId}")
             Text(text = "Short Name: ${security.shortName}")
-            Text(text = "Reg Number: ${security.regNumber}")
-            Text(text = "ISIN: ${security.isin}")
-            Text(text = "Is Traded: ${if (security.isTraded) "Yes" else "No"}")
-            Text(text = "Type: ${security.type}")
+            Text(text = "Issue Size: ${security.issueSize}")
+            Text(text = "Capitalization: ${security.capitalization}")
+            Text(text = "Open Price: ${security.openPrice}")
+            Text(text = "Close Price: ${security.closePrice}")
         }
     } else {
         Text(text = "Loading...")

@@ -26,26 +26,38 @@ class DetailViewModel : ViewModel() {
 
     private fun parseSecurity(response: JsonObject): Security? {
         val securities = response.getAsJsonObject("securities")
-        if (securities != null) {
-            val data = securities.getAsJsonArray("data")
-            if (data.size() > 0) {
-            val row = data[0].asJsonArray
-            val columns = securities.getAsJsonArray("columns")
-            val secIdIndex = columns.indexOfs("SECID")
-            val shortNameIndex = columns.indexOfs("SHORTNAME")
-            val regNumberIndex = columns.indexOfs("REGNUMBER")
-            val isinIndex = columns.indexOfs("ISIN")
-            val typeIndex = columns.indexOfs("SECTYPE")
+        val marketdata = response.getAsJsonObject("marketdata")
 
-            return Security(
-                secId = row[secIdIndex].asString,
-                shortName = row[shortNameIndex].asString,
-                regNumber = row[regNumberIndex].asString,
-                isin = row[isinIndex].asString,
-                isTraded = true,
-                type = row[typeIndex].asString
-            )
-        }}
+        if (securities != null && marketdata != null) {
+            val secData = securities.getAsJsonArray("data")
+            val marketData = marketdata.getAsJsonArray("data")
+
+            if (secData.size() > 0 && marketData.size() > 0) {
+                val secRow = secData[0].asJsonArray
+                val secColumns = securities.getAsJsonArray("columns")
+                val marketRow = marketData[0].asJsonArray
+                val marketColumns = marketdata.getAsJsonArray("columns")
+
+                fun safeGetString(row: JsonArray, columns: JsonArray, name: String): String {
+                    val index = columns.indexOfs(name)
+                    return if (index != -1 && !row[index].isJsonNull) row[index].asString else "N/A"
+                }
+
+                val shortName = safeGetString(secRow, secColumns, "SHORTNAME")
+                val issueSize = safeGetString(secRow, secColumns, "ISSUESIZE")
+                val capitalization = safeGetString(secRow, secColumns, "LOTSIZE")
+                val openPrice = safeGetString(marketRow, marketColumns, "OPEN")
+                val closePrice = safeGetString(secRow, secColumns, "PREVLEGALCLOSEPRICE")
+
+                return Security(
+                    shortName = shortName,
+                    issueSize = issueSize,
+                    capitalization = capitalization,
+                    openPrice = openPrice,
+                    closePrice = closePrice
+                )
+            }
+        }
         return null
     }
 }

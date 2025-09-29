@@ -1,5 +1,6 @@
 package mikle.sam.moex
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -12,6 +13,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
+import kotlin.time.Duration
+import kotlin.time.measureTime
 
 class StockViewModel : ViewModel() {
     private val apiService: MoexApiService = provideRetrofit().create(MoexApiService::class.java)
@@ -19,7 +22,10 @@ class StockViewModel : ViewModel() {
         private set
 
     init {
-        fetchStockPrice(listOf("LKOH", "GAZP","NVTK","MAGN","CHMF"))
+        val time: Duration = measureTime {
+            fetchStockPrice(listOf("LKOH", "GAZP","NVTK","MAGN","CHMF","ARSA","FEES","ENPG"))
+        }
+        Log.w("TimeRequest", time.toString())
     }
 
     private fun fetchStockPrice(ticker: List<String>) {
