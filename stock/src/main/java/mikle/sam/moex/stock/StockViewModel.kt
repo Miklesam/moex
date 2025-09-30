@@ -1,20 +1,17 @@
-package mikle.sam.moex
+package mikle.sam.moex.stock
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import mikle.sam.moex.network.MoexApiService
-import mikle.sam.moex.network.provideRetrofit
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
-import kotlin.time.Duration
-import kotlin.time.measureTime
+import mikle.sam.moex.network.MoexApiService
+import mikle.sam.moex.network.provideRetrofit
+import java.util.concurrent.ConcurrentHashMap
 
 class StockViewModel : ViewModel() {
     private val apiService: MoexApiService = provideRetrofit().create(MoexApiService::class.java)
@@ -22,23 +19,21 @@ class StockViewModel : ViewModel() {
         private set
 
     init {
-        val time: Duration = measureTime {
-            fetchStockPrice(listOf("LKOH", "GAZP","NVTK","MAGN","CHMF","ARSA","FEES","ENPG"))
-        }
-        Log.w("TimeRequest", time.toString())
+        fetchStockPrice(listOf("LKOH", "GAZP","NVTK","MAGN","CHMF","ARSA"))
     }
 
-    private fun fetchStockPrice(ticker: List<String>) {
+    private fun fetchStockPrice(tickers: List<String>) {
+        val prices = ConcurrentHashMap<String, Double>()
         viewModelScope.launch(Dispatchers.IO) {
-            val res: List<Pair<String, Double>> = ticker.map { ticker ->
-                async {
+            tickers.forEach { ticker ->
+                launch {
                     val result = apiService.getStockData(ticker)
-                    Pair(ticker, getPriceFromResponce(result))
+                    val price = getPriceFromResponce(result)
+                    prices[ticker] = price
+                    stockPrice = tickers.map { t -> t to (prices[t] ?: 0.0) }
                 }
-            }.awaitAll()
-            stockPrice = res
+            }
         }
-
     }
 
     fun getPriceFromResponce(response: JsonObject): Double {
@@ -55,4 +50,11 @@ class StockViewModel : ViewModel() {
         }
         return 0.0
     }
+}
+
+fun JsonArray.indexOf(value: String): Int {
+    for (i in 0 until this.size()) {
+        if (this[i].asString == value) return i
+    }
+    return -1
 }

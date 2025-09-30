@@ -1,4 +1,4 @@
-package mikle.sam.moex
+package mikle.sam.moex.network
 
 data class Security(
     val shortName: String,

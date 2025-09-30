@@ -12,7 +12,6 @@ interface MoexApiService {
 
     @GET("iss/engines/stock/markets/shares/securities/{ticker}.json")
     suspend fun getSecurity(@Path("ticker") ticker: String): JsonObject
-
 }
 
 fun provideRetrofit(): Retrofit {

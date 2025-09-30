@@ -1,4 +1,4 @@
-package mikle.sam.moex
+package mikle.sam.moex.details
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -11,16 +11,24 @@ import com.google.gson.JsonArray
 import kotlinx.coroutines.launch
 import mikle.sam.moex.network.MoexApiService
 import mikle.sam.moex.network.provideRetrofit
+import mikle.sam.moex.network.Security
 
 class DetailViewModel : ViewModel() {
     private val apiService: MoexApiService = provideRetrofit().create(MoexApiService::class.java)
     var security by mutableStateOf<Security?>(null)
         private set
+    var errorMessage by mutableStateOf<String?>(null)
+        private set
 
     fun fetchSecurity(ticker: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val response = apiService.getSecurity(ticker)
-            security = parseSecurity(response)
+            try {
+                val response = apiService.getSecurity(ticker)
+                security = parseSecurity(response)
+                errorMessage = null
+            } catch (e: Exception) {
+                errorMessage = "Failed to load data: ${e.message}"
+            }
         }
     }
 

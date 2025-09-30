@@ -14,4 +14,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "My API App"
-include(":app")
+include(":app", ":network", ":details", ":stock")
