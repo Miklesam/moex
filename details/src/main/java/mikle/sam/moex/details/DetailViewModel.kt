@@ -13,8 +13,9 @@ import mikle.sam.moex.network.MoexApiService
 import mikle.sam.moex.network.provideRetrofit
 import mikle.sam.moex.network.Security
 
-class DetailViewModel : ViewModel() {
-    private val apiService: MoexApiService = provideRetrofit().create(MoexApiService::class.java)
+class DetailViewModel(
+    private val apiService: MoexApiService
+) : ViewModel() {
     var security by mutableStateOf<Security?>(null)
         private set
     var errorMessage by mutableStateOf<String?>(null)

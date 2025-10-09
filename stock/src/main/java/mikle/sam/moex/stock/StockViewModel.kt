@@ -13,9 +13,18 @@ import mikle.sam.moex.network.MoexApiService
 import mikle.sam.moex.network.provideRetrofit
 import java.util.concurrent.ConcurrentHashMap
 
-class StockViewModel : ViewModel() {
-    private val apiService: MoexApiService = provideRetrofit().create(MoexApiService::class.java)
-    var stockPrice by mutableStateOf<List<Pair<String, Double>>>(emptyList())
+data class StockScreenState(
+    val ticker: String,
+    val price: Double,
+    val lastChange: Double,
+    val lastChangePrcnt: Double,
+    val issueCapitalization: Double
+)
+
+class StockViewModel(
+    private val apiService: MoexApiService
+) : ViewModel() {
+    var stockState by mutableStateOf<List<StockScreenState>>(emptyList())
         private set
 
     init {
@@ -23,20 +32,22 @@ class StockViewModel : ViewModel() {
     }
 
     private fun fetchStockPrice(tickers: List<String>) {
-        val prices = ConcurrentHashMap<String, Double>()
+        val prices = ConcurrentHashMap<String, StockScreenState>()
         viewModelScope.launch(Dispatchers.IO) {
             tickers.forEach { ticker ->
                 launch {
                     val result = apiService.getStockData(ticker)
-                    val price = getPriceFromResponce(result)
-                    prices[ticker] = price
-                    stockPrice = tickers.map { t -> t to (prices[t] ?: 0.0) }
+                    val stockData = parseStockDataFromResponse(result)
+                    if (stockData != null) {
+                        prices[ticker] = stockData
+                        stockState = tickers.mapNotNull { t -> prices[t] }
+                    }
                 }
             }
         }
     }
 
-    fun getPriceFromResponce(response: JsonObject): Double {
+    fun parseStockDataFromResponse(response: JsonObject): StockScreenState? {
         val marketdata = response.getAsJsonObject("marketdata")
         val dataArray = marketdata.getAsJsonArray("data")
 
@@ -44,11 +55,22 @@ class StockViewModel : ViewModel() {
             val data = dataArray[0].asJsonArray
             val columns = marketdata.getAsJsonArray("columns")
             val lastPriceIndex = columns.indexOf("LAST")
-            if (lastPriceIndex != -1) {
-                return data[lastPriceIndex].asDouble
+            val lastChangeIndex = columns.indexOf("LASTCHANGE")
+            val lastChangePrcntIndex = columns.indexOf("LASTCHANGEPRCNT")
+            val issueCapitalizationIndex = columns.indexOf("ISSUECAPITALIZATION")
+            val secIdIndex = columns.indexOf("SECID")
+
+            if (lastPriceIndex != -1 && lastChangeIndex != -1 && lastChangePrcntIndex != -1 && issueCapitalizationIndex != -1 && secIdIndex != -1) {
+                return StockScreenState(
+                    ticker = data[secIdIndex].asString,
+                    price = data[lastPriceIndex].asDouble,
+                    lastChange = data[lastChangeIndex].asDouble,
+                    lastChangePrcnt = data[lastChangePrcntIndex].asDouble,
+                    issueCapitalization = data[issueCapitalizationIndex].asDouble
+                )
             }
         }
-        return 0.0
+        return null
     }
 }
 

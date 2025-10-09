@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun DetailScreen(stockName: String?, detailViewModel: DetailViewModel = viewModel()) {
+fun DetailScreen(stockName: String?, detailViewModel: DetailViewModel) {
     LaunchedEffect(stockName) {
         stockName?.let { detailViewModel.fetchSecurity(it) }
     }

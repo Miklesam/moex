@@ -5,5 +5,5 @@ data class Security(
     val issueSize: String,
     val capitalization: String,
     val openPrice: String,
-    val closePrice: String
+    val closePrice: String,
 )

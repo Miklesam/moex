@@ -14,7 +14,7 @@ import mikle.sam.moex.stock.StockViewModel
 
 class MainActivity : ComponentActivity() {
 
-    private val stockViewModel: StockViewModel by viewModels()
+    private val stockViewModel: StockViewModel by viewModels { ViewModelFactory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +29,7 @@ class MainActivity : ComponentActivity() {
                 composable("details/{stockName}") { backStackEntry ->
                     DetailScreen(
                         stockName = backStackEntry.arguments?.getString("stockName"),
-                        detailViewModel = viewModel()
+                        detailViewModel = viewModel(factory = ViewModelFactory)
                     )
                 }
             }
