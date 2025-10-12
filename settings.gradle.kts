@@ -1,4 +1,5 @@
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google()
         mavenCentral()
@@ -13,5 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "My API App"
+rootProject.name = "moex"
 include(":app", ":network", ":details", ":stock")
