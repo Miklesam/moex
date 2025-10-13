@@ -49,6 +49,7 @@ dependencies {
     implementation(project(":network"))
     implementation(project(":details"))
     implementation(project(":stock"))
+    implementation(project(":search"))
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.navigation.compose)

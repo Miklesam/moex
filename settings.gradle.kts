@@ -16,3 +16,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "moex"
 include(":app", ":network", ":details", ":stock")
+include(":search")

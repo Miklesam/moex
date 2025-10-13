@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import mikle.sam.moex.details.DetailViewModel
 import mikle.sam.moex.network.MoexApiService
 import mikle.sam.moex.network.provideRetrofit
+import mikle.sam.moex.search.SearchViewModel
 import mikle.sam.moex.stock.StockViewModel
 
 object ViewModelFactory : ViewModelProvider.Factory {
@@ -19,6 +20,10 @@ object ViewModelFactory : ViewModelProvider.Factory {
 
             modelClass.isAssignableFrom(DetailViewModel::class.java) -> {
                 DetailViewModel(apiService) as T
+            }
+
+            modelClass.isAssignableFrom(SearchViewModel::class.java) -> {
+                SearchViewModel(apiService) as T
             }
 
             else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")

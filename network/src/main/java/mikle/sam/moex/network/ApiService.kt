@@ -5,6 +5,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface MoexApiService {
     @GET("iss/engines/stock/markets/shares/boards/TQBR/securities/{ticker}.json")
@@ -12,6 +13,9 @@ interface MoexApiService {
 
     @GET("iss/engines/stock/markets/shares/securities/{ticker}.json")
     suspend fun getSecurity(@Path("ticker") ticker: String): JsonObject
+
+    @GET("iss/securities.json")
+    suspend fun search(@Query("q") query: String): JsonObject
 }
 
 fun provideRetrofit(): Retrofit {
