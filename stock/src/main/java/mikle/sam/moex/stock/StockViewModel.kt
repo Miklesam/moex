@@ -9,9 +9,10 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import dagger.hilt.android.lifecycle.HiltViewModel
 import mikle.sam.moex.network.MoexApiService
-import mikle.sam.moex.network.provideRetrofit
 import java.util.concurrent.ConcurrentHashMap
+import javax.inject.Inject
 
 data class StockScreenState(
     val ticker: String,
@@ -21,7 +22,8 @@ data class StockScreenState(
     val issueCapitalization: Double
 )
 
-class StockViewModel(
+@HiltViewModel
+class StockViewModel @Inject constructor(
     private val apiService: MoexApiService
 ) : ViewModel() {
     var stockState by mutableStateOf<List<StockScreenState>>(emptyList())

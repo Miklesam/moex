@@ -9,11 +9,13 @@ import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers
 import com.google.gson.JsonArray
 import kotlinx.coroutines.launch
+import dagger.hilt.android.lifecycle.HiltViewModel
 import mikle.sam.moex.network.MoexApiService
-import mikle.sam.moex.network.provideRetrofit
 import mikle.sam.moex.network.Security
+import javax.inject.Inject
 
-class DetailViewModel(
+@HiltViewModel
+class DetailViewModel @Inject constructor(
     private val apiService: MoexApiService
 ) : ViewModel() {
     var security by mutableStateOf<Security?>(null)

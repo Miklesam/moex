@@ -12,9 +12,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
-fun StockScreen(stockViewModel: StockViewModel, onStockClick: (String) -> Unit) {
+fun StockScreen(
+    stockViewModel: StockViewModel = hiltViewModel(),
+    onStockClick: (String) -> Unit
+) {
     val stockState = stockViewModel.stockState
 
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {

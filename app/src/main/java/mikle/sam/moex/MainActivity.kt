@@ -3,8 +3,6 @@ package mikle.sam.moex
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -24,11 +22,10 @@ import androidx.navigation.compose.rememberNavController
 import mikle.sam.moex.details.DetailScreen
 import mikle.sam.moex.search.SearchScreen
 import mikle.sam.moex.stock.StockScreen
-import mikle.sam.moex.stock.StockViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
-    private val stockViewModel: StockViewModel by viewModels { ViewModelFactory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,26 +34,25 @@ class MainActivity : ComponentActivity() {
             Scaffold(
                 bottomBar = { BottomBar(navController = navController) }
             ) {
-                BottomNavGraph(navController = navController, stockViewModel = stockViewModel)
+                BottomNavGraph(navController = navController)
             }
         }
     }
 }
 
 @Composable
-fun BottomNavGraph(navController: NavHostController, stockViewModel: StockViewModel) {
+fun BottomNavGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
         startDestination = BottomBarScreen.Watchlist.route
     ) {
         composable(route = BottomBarScreen.Watchlist.route) {
-            StockScreen(stockViewModel, onStockClick = { stockName ->
+            StockScreen(onStockClick = { stockName ->
                 navController.navigate("details/$stockName")
             })
         }
         composable(route = BottomBarScreen.Search.route) {
             SearchScreen(
-                searchViewModel = viewModel(factory = ViewModelFactory),
                 onStockClick = { stockName ->
                     navController.navigate("details/$stockName")
                 }
@@ -64,8 +60,7 @@ fun BottomNavGraph(navController: NavHostController, stockViewModel: StockViewMo
         }
         composable("details/{stockName}") { backStackEntry ->
             DetailScreen(
-                stockName = backStackEntry.arguments?.getString("stockName"),
-                detailViewModel = viewModel(factory = ViewModelFactory)
+                stockName = backStackEntry.arguments?.getString("stockName")
             )
         }
     }

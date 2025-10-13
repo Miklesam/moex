@@ -1,7 +1,8 @@
 [versions]
 androidApplication = "8.12.3"
 androidLibrary = "8.12.3"
-kotlinAndroid = "2.2.20"
+kotlinAndroid = "2.1.0"
+ksp = "2.1.0-1.0.29"
 coreKtx = "1.12.0"
 lifecycle = "2.6.2"
 activityCompose = "1.8.2"
@@ -13,6 +14,9 @@ junit = "4.13.2"
 androidxTestExtJunit = "1.1.5"
 espressoCore = "3.5.1"
 androidTools = "31.12.2"
+
+hilt = "2.51.1"
+hiltExt = "1.2.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -35,6 +39,9 @@ androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-te
 androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 compose-gradlePlugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlinAndroid" }
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltExt" }
 
 # build
 android-gradleApiPlugin = { group = "com.android.tools.build", name = "gradle-api", version.ref = "androidLibrary" }
@@ -45,6 +52,8 @@ android-application = { id = "com.android.application", version.ref = "androidAp
 android-library = { id = "com.android.library", version.ref = "androidLibrary" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlinAndroid" }
 compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlinAndroid" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
 moex-android-application-compose = { id = "moex.android.application.compose" }
 moex-android-library-compose = { id = "moex.android.library.compose" }

@@ -8,9 +8,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
-fun DetailScreen(stockName: String?, detailViewModel: DetailViewModel) {
+fun DetailScreen(
+    stockName: String?,
+    detailViewModel: DetailViewModel = hiltViewModel()
+) {
     LaunchedEffect(stockName) {
         stockName?.let { detailViewModel.fetchSecurity(it) }
     }
