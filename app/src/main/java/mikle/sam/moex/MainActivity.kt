@@ -20,6 +20,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import mikle.sam.moex.details.DetailScreen
+import mikle.sam.moex.favorite.FavoriteScreen
+import mikle.sam.moex.favorite.FavoriteViewModel
 import mikle.sam.moex.search.SearchScreen
 import mikle.sam.moex.stock.StockScreen
 import dagger.hilt.android.AndroidEntryPoint
@@ -58,9 +60,14 @@ fun BottomNavGraph(navController: NavHostController) {
                 }
             )
         }
+        composable(route = BottomBarScreen.Favorite.route) {
+            FavoriteScreen()
+        }
         composable("details/{stockName}") { backStackEntry ->
+            val favoriteViewModel: FavoriteViewModel = androidx.hilt.navigation.compose.hiltViewModel()
             DetailScreen(
-                stockName = backStackEntry.arguments?.getString("stockName")
+                stockName = backStackEntry.arguments?.getString("stockName"),
+                onAddFavorite = { ticker -> favoriteViewModel.addFavorite(ticker) }
             )
         }
     }
@@ -71,6 +78,7 @@ fun BottomBar(navController: NavHostController) {
     val screens = listOf(
         BottomBarScreen.Watchlist,
         BottomBarScreen.Search,
+        BottomBarScreen.Favorite,
     )
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
