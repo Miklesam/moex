@@ -16,6 +16,14 @@ interface MoexApiService {
 
     @GET("iss/securities.json")
     suspend fun search(@Query("q") query: String): JsonObject
+
+    @GET("iss/engines/stock/markets/shares/boards/tqbr/securities/{ticker}/candles.json")
+    suspend fun getCandles(
+        @Path("ticker") ticker: String,
+        @Query("from") from: String? = null,
+        @Query("till") till: String? = null,
+        @Query("interval") interval: Int = 24
+    ): JsonObject
 }
 
 fun provideRetrofit(): Retrofit {

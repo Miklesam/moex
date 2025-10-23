@@ -15,7 +15,11 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.unit.dp
@@ -29,10 +33,16 @@ fun DetailScreen(
     onAddFavorite: (String) -> Unit
 ) {
     LaunchedEffect(stockName) {
-        stockName?.let { detailViewModel.fetchSecurity(it) }
+        stockName?.let { 
+            detailViewModel.fetchSecurity(it)
+            detailViewModel.fetchCandles(it)
+        }
     }
+    
     val security = detailViewModel.security
     val errorMessage = detailViewModel.errorMessage
+    val candles = detailViewModel.candles
+    val candlesErrorMessage = detailViewModel.candlesErrorMessage
 
     val snackbarHostState = androidx.compose.runtime.remember { SnackbarHostState() }
     val scope = androidx.compose.runtime.rememberCoroutineScope()
@@ -56,14 +66,38 @@ fun DetailScreen(
                 Text(text = errorMessage, modifier = Modifier.padding(innerPadding))
             }
             security != null -> {
-                Box(modifier = Modifier.padding(16.dp).padding(innerPadding)) {
-                    Column(modifier = Modifier.align(Alignment.TopStart)) {
-                        Text(text = "Short Name: ${security.shortName}")
-                        Text(text = "Issue Size: ${security.issueSize}")
-                        Text(text = "Capitalization: ${security.capitalization}")
-                        Text(text = "Open Price: ${security.openPrice}")
-                        Text(text = "Close Price: ${security.closePrice}")
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .padding(innerPadding)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    Text(text = "Short Name: ${security.shortName}")
+                    Text(text = "Issue Size: ${security.issueSize}")
+                    Text(text = "Capitalization: ${security.capitalization}")
+                    Text(text = "Open Price: ${security.openPrice}")
+                    Text(text = "Close Price: ${security.closePrice}")
+                    
+                    // Price Chart Section
+                    Text(
+                        text = "Price Chart (Last 30 Days)",
+                        modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                    )
+                    
+                    if (candlesErrorMessage != null) {
+                        Text(
+                            text = "Chart Error: $candlesErrorMessage",
+                            color = androidx.compose.ui.graphics.Color.Red,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
                     }
+                    
+                    PriceChart(
+                        candles = candles,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(300.dp)
+                    )
                 }
             }
             else -> {
