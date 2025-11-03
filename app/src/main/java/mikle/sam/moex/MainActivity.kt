@@ -61,7 +61,9 @@ fun BottomNavGraph(navController: NavHostController) {
             )
         }
         composable(route = BottomBarScreen.Favorite.route) {
-            FavoriteScreen()
+            FavoriteScreen(onStockClick = { stockName ->
+                navController.navigate("details/$stockName")
+            })
         }
         composable("details/{stockName}") { backStackEntry ->
             val favoriteViewModel: FavoriteViewModel = androidx.hilt.navigation.compose.hiltViewModel()

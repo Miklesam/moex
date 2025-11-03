@@ -22,6 +22,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.launch
@@ -33,12 +35,12 @@ fun DetailScreen(
     onAddFavorite: (String) -> Unit
 ) {
     LaunchedEffect(stockName) {
-        stockName?.let { 
+        stockName?.let {
             detailViewModel.fetchSecurity(it)
             detailViewModel.fetchCandles(it)
         }
     }
-    
+
     val security = detailViewModel.security
     val errorMessage = detailViewModel.errorMessage
     val candles = detailViewModel.candles
@@ -66,38 +68,14 @@ fun DetailScreen(
                 Text(text = errorMessage, modifier = Modifier.padding(innerPadding))
             }
             security != null -> {
-                Column(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .padding(innerPadding)
-                        .verticalScroll(rememberScrollState())
-                ) {
-                    Text(text = "Short Name: ${security.shortName}")
-                    Text(text = "Issue Size: ${security.issueSize}")
-                    Text(text = "Capitalization: ${security.capitalization}")
-                    Text(text = "Open Price: ${security.openPrice}")
-                    Text(text = "Close Price: ${security.closePrice}")
-                    
-                    // Price Chart Section
-                    Text(
-                        text = "Price Chart (Last 30 Days)",
-                        modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
-                    )
-                    
-                    if (candlesErrorMessage != null) {
-                        Text(
-                            text = "Chart Error: $candlesErrorMessage",
-                            color = androidx.compose.ui.graphics.Color.Red,
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
+                Box(modifier = Modifier.padding(16.dp).padding(innerPadding)) {
+                    Column(modifier = Modifier.align(Alignment.TopStart)) {
+                        Text(text = "Short Name: ${security.shortName}")
+                        Text(text = "Issue Size: ${security.issueSize}")
+                        Text(text = "Capitalization: ${security.capitalization}")
+                        Text(text = "Open Price: ${security.openPrice}")
+                        Text(text = "Close Price: ${security.closePrice}")
                     }
-                    
-                    PriceChart(
-                        candles = candles,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(300.dp)
-                    )
                 }
             }
             else -> {
