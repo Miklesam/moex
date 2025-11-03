@@ -36,8 +36,8 @@ fun StockScreen(
 @Composable
 fun StockPriceDisplay(stock: StockScreenState, onStockClick: (String) -> Unit) {
     val changeColor = when {
-        stock.lastChange > 0 -> Color.Green
-        stock.lastChange < 0 -> Color.Red
+        stock.lastChange > 0 -> Color(0xFF4CAF50) // Приятный зеленый
+        stock.lastChange < 0 -> Color(0xFFE53935) // Приятный красный
         else -> Color.Black
     }
     Column(
